@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  backend:
+    build: ./backend
+    container_name: ibms_backend
+    restart: unless-stopped
+    environment:
+      JWT_SECRET: ibms_jwt_secret_2024_change_me
+      FLASK_DEBUG: "0"
+      FRONTEND_URL: "http://localhost:3000"
+    volumes:
+      - ./backend/ibms.db:/app/ibms.db   # persist SQLite file
+    ports:
+      - "5000:5000"
+
+  frontend:
+    build: ./frontend
+    container_name: ibms_frontend
+    restart: unless-stopped
+    environment:
+      VITE_API_BASE: http://localhost:5000/api
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend

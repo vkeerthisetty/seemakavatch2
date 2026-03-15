@@ -1,0 +1,91 @@
+{
+  "folders": [
+    { "name": "IBMS Root", "path": "." },
+    { "name": "Backend (Flask)", "path": "backend" },
+    { "name": "Frontend (React/TS)", "path": "frontend" }
+  ],
+  "settings": {
+    "python.defaultInterpreterPath": "${workspaceFolder:Backend (Flask)}/venv/bin/python",
+    "python.terminal.activateEnvironment": true,
+    "editor.formatOnSave": true,
+    "editor.tabSize": 2,
+    "files.exclude": {
+      "**/__pycache__": true,
+      "**/node_modules": true,
+      "**/.git": true
+    }
+  },
+  "extensions": {
+    "recommendations": [
+      "ms-python.python",
+      "ms-python.flake8",
+      "esbenp.prettier-vscode",
+      "dbaeumer.vscode-eslint",
+      "mongodb.mongodb-vscode",
+      "ms-azuretools.vscode-docker"
+    ]
+  },
+  "launch": {
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "name": "Flask Backend",
+        "type": "python",
+        "request": "launch",
+        "program": "${workspaceFolder:Backend (Flask)}/app.py",
+        "env": {
+          "FLASK_ENV": "development",
+          "FLASK_DEBUG": "1"
+        },
+        "console": "integratedTerminal",
+        "cwd": "${workspaceFolder:Backend (Flask)}"
+      },
+      {
+        "name": "Frontend Dev Server",
+        "type": "node",
+        "request": "launch",
+        "runtimeExecutable": "npm",
+        "runtimeArgs": ["run", "dev"],
+        "cwd": "${workspaceFolder:Frontend (React/TS)}",
+        "console": "integratedTerminal"
+      }
+    ],
+    "compounds": [
+      {
+        "name": "Full Stack (Backend + Frontend)",
+        "configurations": ["Flask Backend", "Frontend Dev Server"]
+      }
+    ]
+  },
+  "tasks": {
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "label": "Setup Backend",
+        "type": "shell",
+        "command": "cd backend && python -m venv venv && source venv/bin/activate && pip install -r requirements.txt && cp .env.example .env",
+        "group": "build",
+        "presentation": { "reveal": "always" }
+      },
+      {
+        "label": "Seed Database",
+        "type": "shell",
+        "command": "cd backend && source venv/bin/activate && python seed_db.py",
+        "group": "build"
+      },
+      {
+        "label": "Setup Frontend",
+        "type": "shell",
+        "command": "cd frontend && npm install && cp .env.example .env.local",
+        "group": "build"
+      },
+      {
+        "label": "Docker Compose Up",
+        "type": "shell",
+        "command": "docker-compose up --build",
+        "group": "build",
+        "presentation": { "reveal": "always" }
+      }
+    ]
+  }
+}
